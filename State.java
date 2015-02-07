@@ -21,8 +21,11 @@ public class State {
 		color = Color.BLACK;
 		active = false;
 		success_state = false;
-		name = "state";
+		name = "";
 	}
+	
+	public int x(){ return x; }
+	public int y(){ return y; }
 	
 	public void render(Graphics g, int x_offset, int y_offset){
 		render(Constants.getColor(active,success_state), g, x_offset, y_offset);

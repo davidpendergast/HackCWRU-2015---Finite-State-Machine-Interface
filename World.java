@@ -15,7 +15,7 @@ public class World {
 	State selected_state = null;
 	Link selected_link = null;
 	
-	int state_num = 0;
+	public boolean setting_new_link = false;
 	
 	
 	/**
@@ -24,6 +24,10 @@ public class World {
 	public World(){
 		states = new ArrayList<State>();
 		links = new ArrayList<Link>();
+		
+		addState(new State(0,0));
+		addState(new State(50,50));
+		links.add(new Link(states.get(0),states.get(1)));
 	}
 	
 	/**
@@ -44,52 +48,41 @@ public class World {
 		}
 	}
 	
+	public void renderLinks(Graphics g, int x_offset, int y_offset){
+		for(Link l : links){
+			if(l != selected_link){
+				l.render(Constants.link_color,g, x_offset, y_offset);
+			}
+		}
+		
+		if(selected_link != null){
+			selected_link.render(Constants.select_color, g, x_offset, y_offset);
+		}
+	}
+	
 	/**
 	 * Add a new state to the world.
 	 * @param state
 	 */
-	public void addState(State state) {
-		states.add(state);	
+	public boolean addState(State state) {
+		//dont want duplicate states.
+		if(!states.contains(state)){
+			states.add(state);
+			return true;
+		}
+		
+		return false;
+			
 	}
-
-	/**
-	 * Handling a non-dragging click event. Will either: deselect state/link, select state, select link, place new state, or start new link.
-	 * @param button
-	 * @param x
-	 * @param y
-	 * @param shift_held
-	 */
-	public void click(int button, int x, int y, boolean shift_held) {
-//		System.out.println("World - clicking "+button);
-		
-		State s = getStateAt(x,y);
-		
-		//if it's a right click
-		if(button == 3){
-			if(s != null){
-				s.toggleIsSuccessState();
-			}
-			else{
-				deselect();
-			}
-			return;
+	
+	public boolean addLink(Link link){
+		//dont want duplicate links
+		if(!links.contains(link)){
+			links.add(link);
+			return true;
 		}
 		
-		if(s != null){
-			select(s);
-			return;
-		}
-		
-		if(s == null && shift_held){
-			s = new State(x,y);
-			addState(s);
-			select(s);
-			return;
-		}
-		
-		if(s == null && !shift_held){
-			deselect();
-		}
+		return false;
 		
 	}
 	
@@ -115,6 +108,11 @@ public class World {
 		if(s != null){
 			s.addLetter(c);
 		}
+		
+		Link l = selected_link;
+		if(l != null){
+			l.addChar(c);
+		}
 	}
 	
 	/**
@@ -127,6 +125,13 @@ public class World {
 			deselect();
 			states.remove(s);
 		}
+		
+		Link l = selected_link;
+		if(l != null){
+			deselect();
+			links.remove(l);
+			setting_new_link = false;	
+		}
 	}
 	
 	/**
@@ -137,6 +142,12 @@ public class World {
 		
 		if(s != null){
 			s.removeLetter();
+		}
+		
+		Link l = selected_link;
+		
+		if(l != null){
+			l.delChar();
 		}
 	}
 	
@@ -189,11 +200,16 @@ public class World {
 	 * @return
 	 */
 	public Link getLinkAt(int x, int y){
+		int dist = 10;
+		Link closest = null;
 		for(Link l : links){
-			//
+			if(l.distTo(x, y) < dist){
+				closest = l;
+				dist = (int)l.distTo(x, y);
+			}
 		}
+		return closest;
 		
-		return null;
 	}
 
 }

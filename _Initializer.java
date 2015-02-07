@@ -27,10 +27,15 @@ public class _Initializer {
 			g.setColor(Constants.background_color);
 			g.fillRect(0, 0, window.getSize().width, window.getSize().height);
 			world.renderStates(g, 0, 0);	
+			world.renderLinks(g, 0, 0);
 			window.drawImage();
 			
+			input_adapter.freeze();
 			click_handler.handleClicks();
+			click_handler.HandleDrags();
+			click_handler.HandleMouseMove();
 			input_adapter.applyInputs();
+			input_adapter.unfreeze();
 			
 
 			sleep(15);

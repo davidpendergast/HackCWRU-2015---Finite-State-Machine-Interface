@@ -1,7 +1,12 @@
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JTextField;
 
 
 public class SettingsWindow extends Window {
@@ -9,8 +14,15 @@ public class SettingsWindow extends Window {
 	JCheckBox state_checkbox;
 	JCheckBox link_checkbox;
 	
+	JTextField text_entry;
+	
+	JButton reset;
+	
+	String current_string;
+	int index = 0;
+	
 	public SettingsWindow(int x_pos, int y_pos){
-		super(320, 640);
+		super(280, 640);
 		frame.setLocation(x_pos, y_pos);
 		
 		state_checkbox = new JCheckBox("State", true);
@@ -19,6 +31,16 @@ public class SettingsWindow extends Window {
 		panel.add(link_checkbox);
 		
 		setUpStateAndLink();
+		
+		text_entry = new JTextField("aaaabbbb", 20);
+		setUpTextEntry();
+		panel.add(text_entry, BorderLayout.SOUTH);
+		
+		reset = new JButton("Reset States");
+		panel.add(reset, BorderLayout.SOUTH);
+		
+		panel.updateUI();
+		panel.repaint();
 		
 	}
 	
@@ -39,6 +61,20 @@ public class SettingsWindow extends Window {
 				state_checkbox.setSelected(!state_checkbox.isSelected());
 				
 			}
+		});
+	}
+	
+	private void setUpTextEntry(){
+		text_entry.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				current_string = text_entry.getText();
+				index = 0;
+				System.out.println("SettingsWindow = "+current_string);
+				
+			}
+			
 		});
 	}
 	

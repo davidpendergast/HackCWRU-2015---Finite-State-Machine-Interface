@@ -20,6 +20,9 @@ public class InputAdapter extends MouseAdapter implements  KeyListener {
 	public MouseEvent last_drag = null;
 	public MouseEvent last_drag_buffer = null;
 	
+	public MouseEvent last_move = null;
+	public MouseEvent last_move_buffer = null;
+	
 	public Character last_char = null;
 	public Character last_char_buffer = null;
 	
@@ -42,6 +45,9 @@ public class InputAdapter extends MouseAdapter implements  KeyListener {
 		last_click = last_click_buffer;
 		last_click_buffer = null;
 		
+		last_move = last_move_buffer;
+		last_move_buffer = null;
+		
 		last_drag = last_drag_buffer;
 		last_drag_buffer = null;
 		freeze = false;
@@ -51,7 +57,6 @@ public class InputAdapter extends MouseAdapter implements  KeyListener {
 	 * Injects key inputs into the world.
 	 */
 	public void applyInputs(){
-		freeze();
 		
 		//handling click event.
 //		MouseEvent click = last_click;
@@ -89,7 +94,6 @@ public class InputAdapter extends MouseAdapter implements  KeyListener {
 				world.delete();
 			}
 		}
-		unfreeze();
 	}
 
 	@Override
@@ -127,7 +131,7 @@ public class InputAdapter extends MouseAdapter implements  KeyListener {
 	public void mouseDragged(MouseEvent e){
 //		if(held_keys.contains(KeyEvent.VK_SHIFT))
 //			return;
-		System.out.println("Dragged!");
+//		System.out.println("Dragged!");
 //		if(freeze)
 //			last_drag_buffer = e;	
 //		else{
@@ -138,7 +142,7 @@ public class InputAdapter extends MouseAdapter implements  KeyListener {
 	
 	@Override
 	public void mousePressed(MouseEvent e){
-		System.out.println("Pressed!");
+//		System.out.println("Pressed!");
 		if(freeze)
 			last_click_buffer = e;	
 		else{
@@ -153,12 +157,16 @@ public class InputAdapter extends MouseAdapter implements  KeyListener {
 	
 	@Override
 	public void mouseMoved(MouseEvent e){
-		
+		if(freeze)
+			last_move_buffer = e;	
+		else{
+			last_move = e;
+		}
 	}
 	
 	public void mouseEntered(MouseEvent e){
-		Component c = e.getComponent();
-		System.out.println("entered");
+//		Component c = e.getComponent();
+//		System.out.println("entered");
 		
 	}
 
