@@ -17,12 +17,18 @@ public class SettingsWindow extends Window {
 	JTextField text_entry;
 	
 	JButton reset;
+	JButton step;
+	JButton clear;
 	
 	String current_string;
-	int index = 0;
+	
+	LogicHandler logic_handler;
+	
+	boolean clear_world = false;
 	
 	public SettingsWindow(int x_pos, int y_pos){
 		super(280, 640);
+		
 		frame.setLocation(x_pos, y_pos);
 		
 		state_checkbox = new JCheckBox("State", true);
@@ -36,12 +42,23 @@ public class SettingsWindow extends Window {
 		setUpTextEntry();
 		panel.add(text_entry, BorderLayout.SOUTH);
 		
-		reset = new JButton("Reset States");
+		reset = new JButton("RESTART");
 		panel.add(reset, BorderLayout.SOUTH);
+		step = new JButton("STEP");
+		panel.add(step, BorderLayout.SOUTH);
+		clear = new JButton("CLEAR");
+		panel.add(clear, BorderLayout.SOUTH);
+		
+		setUpButtons();
 		
 		panel.updateUI();
 		panel.repaint();
 		
+	}
+	
+	public void giveLogicHandler(LogicHandler lh){
+		this.logic_handler = lh;
+		this.logic_handler.reset();
 	}
 	
 	private void setUpStateAndLink(){
@@ -69,13 +86,48 @@ public class SettingsWindow extends Window {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				current_string = text_entry.getText();
-				index = 0;
-				System.out.println("SettingsWindow = "+current_string);
+				if(logic_handler != null){
+					logic_handler.setString(text_entry.getText());
+				}
 				
 			}
 			
 		});
+	}
+	
+	private void setUpButtons(){
+		reset.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(logic_handler != null){
+					logic_handler.setString(text_entry.getText());
+					logic_handler.reset();
+				}
+			}
+		});
+		
+		step.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(logic_handler != null){
+					logic_handler.step();
+				}
+			}
+		});
+		
+		clear.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				clear_world = true;
+				
+			}
+			
+		});
+		
+		
 	}
 	
 	public boolean stateIsSelected(){

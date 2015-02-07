@@ -1,4 +1,7 @@
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +18,8 @@ public class World {
 	State selected_state = null;
 	Link selected_link = null;
 	
+	public LogicHandler logic_handler;
+	
 	public boolean setting_new_link = false;
 	
 	
@@ -25,9 +30,24 @@ public class World {
 		states = new ArrayList<State>();
 		links = new ArrayList<Link>();
 		
-		addState(new State(0,0));
-		addState(new State(50,50));
-		links.add(new Link(states.get(0),states.get(1)));
+//		addState(new State(0,0));
+//		addState(new State(50,50));
+//		links.add(new Link(states.get(0),states.get(1)));
+		
+		addState(new State(960/2,640/2));
+		states.get(0).setName("INIT");
+		
+		logic_handler = new LogicHandler(this, states.get(0));
+	}
+	
+	public void clear(){
+		deselect();
+		ArrayList<State> new_states = new ArrayList<State>();
+		new_states.add(states.get(0));
+		states = new_states;
+		links = new ArrayList<Link>();
+		setting_new_link = false;
+		
 	}
 	
 	/**
@@ -58,6 +78,43 @@ public class World {
 		if(selected_link != null){
 			selected_link.render(Constants.select_color, g, x_offset, y_offset);
 		}
+	}
+	
+	public void renderString(Graphics g, int x, int y){
+		char[] chars = logic_handler.current_string.toCharArray();
+		Color[] c = logic_handler.colors;
+		if(chars.length != c.length) return;
+		
+		g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 32));
+		Graphics2D g2 = (Graphics2D)g;
+		for(int i = 0; i < chars.length; i++){
+			if(c[i] == null){
+				g2.setColor(Constants.inactive_color);
+			}
+			else
+				g2.setColor(c[i]);
+			g2.drawChars(chars,i,1, x+i*30, y);	
+		}
+	}
+	
+	public ArrayList<Link> linksFrom(State s){
+		ArrayList<Link> result = new ArrayList<Link>();
+		for(Link l : links){
+			if(l.from() == s){
+				result.add(l);
+			}
+		}
+		return result;
+	}
+	
+	public ArrayList<Link> linksTo(State s){
+		ArrayList<Link> result = new ArrayList<Link>();
+		for(Link l : links){
+			if(l.to() == s){
+				result.add(l);
+			}
+		}
+		return result;
 	}
 	
 	/**
@@ -121,8 +178,16 @@ public class World {
 	public void delete(){
 		State s = selected_state;
 		
-		if(s != null){
+		if(s != null && !logic_handler.isInitialState(s)){
 			deselect();
+			
+			//remove all links to deleted node
+			for(int i = links.size()-1; i >= 0; i--){
+				if(links.get(i).containsState(s)){
+					links.remove(i);
+				}
+			}
+			
 			states.remove(s);
 		}
 		

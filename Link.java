@@ -25,7 +25,7 @@ public class Link {
 	float arkyness = 0;
 	
 	//transition inputs
-	String conditions = "abc";
+	String conditions = "";
 	int max_num_conditions = 8;
 	
 	public Link(State s0, int x, int y){
@@ -38,6 +38,14 @@ public class Link {
 		this(s0,0,0);
 		s0.setIsActive(true);
 		this.s1 = s1;
+	}
+	
+	public State to(){
+		return s1;
+	}
+	
+	public State from(){
+		return s0;
 	}
 	
 	public void addChar(char c){
@@ -94,8 +102,28 @@ public class Link {
 			y1 = s1.y();
 		}
 		
-		drawArcBetweenPoints(x0,y0,x1,y1,g,c);
-		drawPointer(x1,y1,cx,cy,15f,g,c);
+		//this makes it so the arrows just touch the edge of the states, rather than going between centers.
+		float dist = (float)Math.sqrt((cx-x0)*(cx-x0) + (cy-y0)*(cy-y0));
+		float ratio = (dist-Constants.state_radius)/dist;
+		float r0x = (ratio)*x0 + (1-ratio)*cx;
+		float r0y = (ratio)*y0 + (1-ratio)*cy;
+		
+		if(s0.distTo(x1,y1) <= Constants.state_radius){
+			r0x = x0;
+			r0y = y0;
+		}
+		
+		float dist2 = (float)Math.sqrt((cx-x1)*(cx-x1) + (cy-y1)*(cy-y1));
+		float ratio2 = (dist2-Constants.state_radius)/dist2;
+		float r1x = (ratio2)*x1 + (1-ratio2)*cx;
+		float r1y = (ratio2)*y1 + (1-ratio2)*cy;
+		
+		if(s1 == null || s1.distTo((int)r0x,(int)r0y) <= Constants.state_radius ){
+			r1x = x1;
+			r1y = y1;
+		}
+		drawArcBetweenPoints((int)r0x,(int)r0y,(int)r1x,(int)r1y,g,c);
+		drawPointer((int)r1x,(int)r1y,cx,cy,15f,g,c);
 		drawText(cx, cy, g, c);
 	}
 	
@@ -165,6 +193,10 @@ public class Link {
 	
 	public boolean equals(Object obj){
 		if(obj instanceof Link){
+			
+			if (this == obj)
+				return true;
+			
 			Link l = (Link)obj;
 			if(l.s1 == null || this.s1 == null)
 				return false;
@@ -174,6 +206,14 @@ public class Link {
 		}
 		
 		return false;
+	}
+	
+	public boolean containsState(State s){
+		return s0 == s || s1 == s;
+	}
+	
+	public boolean containsCondition(char c){
+		return conditions.indexOf(c) != -1;
 	}
 	
 	

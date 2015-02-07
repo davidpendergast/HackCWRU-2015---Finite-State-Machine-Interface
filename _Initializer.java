@@ -20,6 +20,7 @@ public class _Initializer {
 		window.requestFocus();
 		
 		ClickHandler click_handler = new ClickHandler(world, input_adapter, settings_window);
+		settings_window.giveLogicHandler(world.logic_handler);
 		
 		while(true){
 			
@@ -28,6 +29,7 @@ public class _Initializer {
 			g.fillRect(0, 0, window.getSize().width, window.getSize().height);
 			world.renderStates(g, 0, 0);	
 			world.renderLinks(g, 0, 0);
+			world.renderString(g,0,window.getSize().height-40);
 			window.drawImage();
 			
 			input_adapter.freeze();
@@ -36,6 +38,11 @@ public class _Initializer {
 			click_handler.HandleMouseMove();
 			input_adapter.applyInputs();
 			input_adapter.unfreeze();
+			
+			if(settings_window.clear_world){
+				world.clear();
+				settings_window.clear_world = false;
+			}
 			
 
 			sleep(15);

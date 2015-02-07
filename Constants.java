@@ -5,9 +5,9 @@ public class Constants {
 	public static int state_radius = 30;
 	public static int inner_radius = 22;
 	
-	private static Color inactive_color = Color.WHITE;
-	private static Color active_fail_color = Color.RED;
-	private static Color active_success_color = Color.GREEN;
+	public static Color inactive_color = Color.WHITE;
+	public static Color active_fail_color = Color.RED;
+	public static Color active_success_color = Color.GREEN;
 	
 	public static Color select_color = Color.BLUE;
 	

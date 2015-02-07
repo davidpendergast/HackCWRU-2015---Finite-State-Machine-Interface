@@ -105,6 +105,11 @@ public class State {
 		return s;
 		
 	}
+
+	public void setName(String string) {
+		name = string;
+		
+	}
 	
 	
 
