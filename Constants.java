@@ -1,6 +1,10 @@
 import java.awt.Color;
 
-
+/**
+ * Class which holds the variable values of the GUI.
+ * @author dpendergast
+ *
+ */
 public class Constants {
 	public static int state_radius = 30;
 	public static int inner_radius = 22;

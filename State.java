@@ -3,13 +3,15 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-
+/**
+ * Class which represents the States of the FSM. Deals with both the rendering as well as the logic components.
+ * @author dpendergast
+ *
+ */
 public class State {
 	
 	private int x,y;
-	private Color color;
 	private boolean active;
-	private ArrayList<Link> links;
 	private boolean success_state;
 	
 	private String name;
@@ -18,7 +20,6 @@ public class State {
 		this.x = x;
 		this.y = y;
 		
-		color = Color.BLACK;
 		active = false;
 		success_state = false;
 		name = "";
@@ -49,8 +50,6 @@ public class State {
 			int width = metrics.stringWidth(name);
 			g.drawChars(name.toCharArray(), 0, name.length(), x - width/2 - x_offset, y + height/4 - y_offset);
 		}
-		
-//		System.out.println("State : "+this+" rendered at "+x+", "+y);
 		
 	}
 	
@@ -103,12 +102,14 @@ public class State {
 		String s = "State=("+x+","+y+")";
 		
 		return s;
-		
 	}
 
 	public void setName(String string) {
 		name = string;
-		
+	}
+
+	public void setIsSuccessState(boolean is_success) {
+		success_state = is_success;
 	}
 	
 	

@@ -3,7 +3,12 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.SwingUtilities;
 
-
+/**
+ * Class which handles clicks in the world. Takes into acount whether user is holding shift,
+ * in Link or State placement mode, and which mouse button was used.
+ * @author dpendergast
+ *
+ */
 public class ClickHandler {
 	
 	World world;

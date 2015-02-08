@@ -8,7 +8,11 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
-
+/**
+ * Class which handles everything in the small, input-taking window.
+ * @author dpendergast
+ *
+ */
 public class SettingsWindow extends Window {
 
 	JCheckBox state_checkbox;
@@ -22,12 +26,19 @@ public class SettingsWindow extends Window {
 	
 	String current_string;
 	
-	LogicHandler logic_handler;
-	
 	boolean clear_world = false;
+	boolean save_world = false;
+	boolean load_world = false;
 	
-	public SettingsWindow(int x_pos, int y_pos){
+	JTextField file_name;
+	JButton save;
+	JButton load;
+	
+	World w;
+	
+	public SettingsWindow(int x_pos, int y_pos, World w){
 		super(280, 640);
+		this.w = w;
 		
 		frame.setLocation(x_pos, y_pos);
 		
@@ -39,7 +50,8 @@ public class SettingsWindow extends Window {
 		setUpStateAndLink();
 		
 		text_entry = new JTextField("aaaabbbb", 20);
-		setUpTextEntry();
+		file_name = new JTextField("", 20);
+		setUpTextEntries();
 		panel.add(text_entry, BorderLayout.SOUTH);
 		
 		reset = new JButton("RESTART");
@@ -51,14 +63,27 @@ public class SettingsWindow extends Window {
 		
 		setUpButtons();
 		
+		panel.add(file_name);
+		
+		save = new JButton("SAVE");
+		load = new JButton("LOAD");
+		
+		setUpSaveLoad();
+		panel.add(save);
+		panel.add(load);
+		
 		panel.updateUI();
 		panel.repaint();
 		
 	}
 	
+	public String getFilename(){
+		return file_name.getText();
+	}
+	
 	public void giveLogicHandler(LogicHandler lh){
-		this.logic_handler = lh;
-		this.logic_handler.reset();
+		w.logic_handler = lh;
+		w.logic_handler.reset();
 	}
 	
 	private void setUpStateAndLink(){
@@ -69,6 +94,7 @@ public class SettingsWindow extends Window {
 				link_checkbox.setSelected(!link_checkbox.isSelected());
 				
 			}
+			
 		});
 		
 		link_checkbox.addItemListener(new ItemListener(){
@@ -79,20 +105,30 @@ public class SettingsWindow extends Window {
 				
 			}
 		});
+		
 	}
 	
-	private void setUpTextEntry(){
+	private void setUpTextEntries(){
 		text_entry.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(logic_handler != null){
-					logic_handler.setString(text_entry.getText());
+				if(w.logic_handler != null){
+					w.logic_handler.setString(text_entry.getText());
 				}
-				
 			}
 			
 		});
+		
+		file_name.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 	}
 	
 	private void setUpButtons(){
@@ -100,21 +136,23 @@ public class SettingsWindow extends Window {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(logic_handler != null){
-					logic_handler.setString(text_entry.getText());
-					logic_handler.reset();
+				if(w.logic_handler != null){
+					w.logic_handler.setString(text_entry.getText());
+					w.logic_handler.reset();
 				}
 			}
+			
 		});
 		
 		step.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(logic_handler != null){
-					logic_handler.step();
+				if(w.logic_handler != null){
+					w.logic_handler.step();
 				}
 			}
+			
 		});
 		
 		clear.addActionListener(new ActionListener(){
@@ -128,6 +166,26 @@ public class SettingsWindow extends Window {
 		});
 		
 		
+	}
+	
+	private void setUpSaveLoad(){
+		save.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				save_world = true;
+			}
+			
+		});
+		
+		load.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				load_world = true;
+			}
+			
+		});
 	}
 	
 	public boolean stateIsSelected(){

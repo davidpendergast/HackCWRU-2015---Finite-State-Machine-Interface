@@ -2,13 +2,15 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.geom.Path2D;
 import java.awt.geom.QuadCurve2D;
-import java.util.ArrayList;
-import java.util.Set;
 
-
+/**
+ * Class which contains state transition data. The calculations for drawing the curves properly were easily
+ * the hardest part of this project. I eventually settled on Bezier curves instead of eliptical arcs, because they
+ * are way easier to deal with.
+ * @author dpendergast
+ *
+ */
 public class Link {
 	
 	//source and recieving state
@@ -36,7 +38,6 @@ public class Link {
 	
 	public Link(State s0, State s1) {
 		this(s0,0,0);
-		s0.setIsActive(true);
 		this.s1 = s1;
 	}
 	
@@ -86,13 +87,12 @@ public class Link {
 	}
 
 	public void render(Color c, Graphics g, int x_offset, int y_offset){
-//		System.out.println("Link - rendering");
-		
 		int x0 = s0.x();
 		int y0 = s0.y();
 		
 		int x1,y1;
 		
+		//finding where the arrow should point.
 		if(s1 == null){
 			x1 = x;
 			y1 = y;
@@ -108,7 +108,7 @@ public class Link {
 		float r0x = (ratio)*x0 + (1-ratio)*cx;
 		float r0y = (ratio)*y0 + (1-ratio)*cy;
 		
-		if(s0.distTo(x1,y1) <= Constants.state_radius){
+		if((s1 == null && s0.distTo(x1,y1) <= Constants.state_radius) || (s1 == s0 && s0.distTo(cx, cy) <= Constants.state_radius)){
 			r0x = x0;
 			r0y = y0;
 		}
@@ -118,10 +118,12 @@ public class Link {
 		float r1x = (ratio2)*x1 + (1-ratio2)*cx;
 		float r1y = (ratio2)*y1 + (1-ratio2)*cy;
 		
-		if(s1 == null || s1.distTo((int)r0x,(int)r0y) <= Constants.state_radius ){
+		if(s1 == null || (s1 == s0 && s0.distTo(cx, cy) <= Constants.state_radius)){//|| s1.distTo((int)r0x,(int)r0y) <= Constants.state_radius ){
 			r1x = x1;
 			r1y = y1;
 		}
+		
+		//actual drawing of things
 		drawArcBetweenPoints((int)r0x,(int)r0y,(int)r1x,(int)r1y,g,c);
 		drawPointer((int)r1x,(int)r1y,cx,cy,15f,g,c);
 		drawText(cx, cy, g, c);
@@ -164,10 +166,16 @@ public class Link {
 		g.drawLine(x1, y1, (int)(x1 + dx*cos - dy*sin), (int)(y1 + dx*sin + dy*cos));
 		g.drawLine(x1, y1, (int)(x1 + dx*cos + dy*sin), (int)(y1 - dx*sin + dy*cos));
 		g.drawLine((int)(x1 + dx*cos - dy*sin), (int)(y1 + dx*sin + dy*cos), (int)(x1 + dx*cos + dy*sin), (int)(y1 - dx*sin + dy*cos));
-		
-		
+
 	}
 	
+	/**
+	 * Draws the conditions text
+	 * @param cx
+	 * @param cy
+	 * @param g
+	 * @param c
+	 */
 	private void drawText(int cx, int cy, Graphics g, Color c){
 			if(!conditions.equals("")){
 				FontMetrics metrics = g.getFontMetrics();
@@ -178,11 +186,19 @@ public class Link {
 			}
 	}
 
+	/**
+	 * Sets location of the end of an incomplete link.
+	 * @param x
+	 * @param y
+	 */
 	public void setLocation(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
 	
+	/**
+	 * Reverses the direction of the link.
+	 */
 	public void swapDirection(){
 		if(s1 == null)
 			return;
@@ -214,6 +230,12 @@ public class Link {
 	
 	public boolean containsCondition(char c){
 		return conditions.indexOf(c) != -1;
+	}
+
+	public void setConditions(String con) {
+		if(con.length() <= max_num_conditions){
+			conditions = con;
+		}
 	}
 	
 	

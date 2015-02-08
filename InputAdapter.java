@@ -1,4 +1,3 @@
-import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -6,9 +5,12 @@ import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.swing.JFrame;
-
-
+/**
+ * Class which recieves and stores the Keyboard and Mouse events detected by the JFrame. Sends these events 
+ * directly to the world when applyInputs is called.
+ * @author dpendergast
+ *
+ */
 public class InputAdapter extends MouseAdapter implements  KeyListener {
 
 	public World world;
@@ -58,28 +60,12 @@ public class InputAdapter extends MouseAdapter implements  KeyListener {
 	 */
 	public void applyInputs(){
 		
-		//handling click event.
-//		MouseEvent click = last_click;
-//		if(click != null){
-////			System.out.println("InputAdapter - "+held_keys);
-//			world.click(click.getButton(), click.getX(), click.getY(), held_keys.contains(KeyEvent.VK_SHIFT));
-//		}
-		
-		//handling drag event.
-//		MouseEvent drag = last_drag;
-//		if(drag != null){
-//			world.moveSelected(drag.getX(), drag.getY());
-//			drag = null;
-//		}
-		
 		CopyOnWriteArrayList<KeyEvent> temp = typed_keys;
 		typed_keys = new CopyOnWriteArrayList<KeyEvent>();
 		
 		//going through all key events
 		for(KeyEvent ke : temp){
 			char c = ke.getKeyChar();
-			
-//			System.out.println("ke = "+ke.getKeyCode() +", bs = "+KeyEvent.VK_BACK_SPACE+", del = "+KeyEvent.VK_DELETE);
 			
 			if(' ' <= c  && c <= '~'){
 				//if c is an alphabetic char, it gets typed into the world
@@ -98,22 +84,13 @@ public class InputAdapter extends MouseAdapter implements  KeyListener {
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-//		typed_keys.add(e);
 		
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		held_keys.add(e.getKeyCode());
-		
-		//non alpha-numeric keys cannot be processed as keyTyped events,
-		//so they are handled here.
-//		if(!Character.isAlphabetic(e.getKeyChar())){
-			typed_keys.add(e);
-//		}
-		
-//		System.out.println(held_keys);
-		
+		typed_keys.add(e);
 	}
 
 	@Override
@@ -129,20 +106,11 @@ public class InputAdapter extends MouseAdapter implements  KeyListener {
 	
 	@Override
 	public void mouseDragged(MouseEvent e){
-//		if(held_keys.contains(KeyEvent.VK_SHIFT))
-//			return;
-//		System.out.println("Dragged!");
-//		if(freeze)
-//			last_drag_buffer = e;	
-//		else{
-//			last_drag = e;
-//		}
 		last_drag = e;
 	}
 	
 	@Override
 	public void mousePressed(MouseEvent e){
-//		System.out.println("Pressed!");
 		if(freeze)
 			last_click_buffer = e;	
 		else{
@@ -165,8 +133,6 @@ public class InputAdapter extends MouseAdapter implements  KeyListener {
 	}
 	
 	public void mouseEntered(MouseEvent e){
-//		Component c = e.getComponent();
-//		System.out.println("entered");
 		
 	}
 

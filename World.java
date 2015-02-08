@@ -2,14 +2,15 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
-import javax.swing.event.ListSelectionEvent;
-
-
+/**
+ * Class which holds all the States and Links, and manages the user inputs.
+ * @author dpendergast
+ *
+ */
 public class World {
 	
 	ArrayList<State> states;
@@ -30,10 +31,6 @@ public class World {
 		states = new ArrayList<State>();
 		links = new ArrayList<Link>();
 		
-//		addState(new State(0,0));
-//		addState(new State(50,50));
-//		links.add(new Link(states.get(0),states.get(1)));
-		
 		addState(new State(960/2,640/2));
 		states.get(0).setName("INIT");
 		
@@ -43,7 +40,12 @@ public class World {
 	public void clear(){
 		deselect();
 		ArrayList<State> new_states = new ArrayList<State>();
-		new_states.add(states.get(0));
+		if(!states.isEmpty())
+			new_states.add(states.get(0));
+		else{
+			new_states.add(new State(960/2,640/2));
+			logic_handler.initial_state = new_states.get(0);
+		}
 		states = new_states;
 		links = new ArrayList<Link>();
 		setting_new_link = false;
@@ -156,10 +158,12 @@ public class World {
 	}
 	
 	/**
-	 * Type a char into selected state or link. If nothing is selected, input is discarded.
+	 * Type a char into selected state or link. If nothing is selected, input is discarded. No spaces are alowed.
 	 * @param c
 	 */
 	public void typeChar(char c){
+		if(c == ' ')
+			return;
 		State s = selected_state;
 		
 		if(s != null){
@@ -274,6 +278,40 @@ public class World {
 			}
 		}
 		return closest;
+		
+	}
+
+	public State getState(String s1) {
+		for(State s: states){
+			if(s.name().equals(s1)){
+				return s;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Activates the epsilon transitions of given state, for the purpose of evaluating a NDFSM.
+	 * @param state
+	 */
+	public void activateETransitions(State state) {
+		Queue<State> state_queue = new LinkedList<State>();
+		state_queue.add(state);
+		while(!state_queue.isEmpty()){
+			State cur = state_queue.poll();
+			if(cur.isActive())
+				continue;
+			
+			ArrayList<Link> links_from = linksFrom(cur);
+			for(Link l : links_from){
+				if(l.containsCondition('E')){
+					if(l.to() != null){
+						state_queue.add(l.to());
+					}
+				}
+			}
+			cur.setIsActive(true);
+		}
 		
 	}
 

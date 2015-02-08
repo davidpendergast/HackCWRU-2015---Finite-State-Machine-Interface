@@ -1,7 +1,11 @@
 import java.awt.Color;
 import java.util.ArrayList;
 
-
+/**
+ * Handles the Step and Reset functions of the FSM. 
+ * @author dpendergast
+ *
+ */
 public class LogicHandler {
 	World world;
 	
@@ -17,24 +21,20 @@ public class LogicHandler {
 	}
 	
 	public void reset(){
-//		System.out.println("LogicHandler - resetting");
+
 		for(State s : world.states){
 			s.setIsActive(false);
 		}
 		
 		index = 0;
-//		setString(current_string);
-		
-		initial_state.setIsActive(true);
+
+		world.activateETransitions(initial_state);
 	}
 	
 	public void setString(String s){
 		index = 0;
 		current_string = s;
 		Color[] temp = new Color[s.length()];
-//		for(int i = 0; i < colors.length; i++){
-//			colors[i] = Constants.inactive_color;
-//		}
 		
 		colors = temp;
 	}
@@ -44,7 +44,6 @@ public class LogicHandler {
 	}
 
 	public void step() {
-//		System.out.println("Stepping");
 		if(index == current_string.length())
 			return;
 		
@@ -61,12 +60,13 @@ public class LogicHandler {
 		boolean found_fail = false;
 		boolean found_succ = false;
 		
-		System.out.println("Active states = "+active_states);
-		
 		for(State s : active_states){
 			for(Link l : world.linksFrom(s)){
 				if(l.containsCondition(c)){
-					l.to().setIsActive(true);
+					
+					//activating the state, and all E connected states.
+					world.activateETransitions(l.to());
+					
 					if(l.to().isSuccessState()) found_succ = true;
 					else found_fail = true;
 				}

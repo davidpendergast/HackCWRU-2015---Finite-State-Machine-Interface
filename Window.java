@@ -7,7 +7,11 @@ import java.awt.event.ComponentListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-
+/**
+ * Class which manages the JFrame skeleton of the program.
+ * @author dpendergast
+ *
+ */
 public class Window {
 	
 	JFrame frame;
